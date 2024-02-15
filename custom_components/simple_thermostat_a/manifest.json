@@ -1,7 +1,7 @@
 {
   "domain": "simple_thermostat",
   "name": "Simple Thermostat",
-  "documentation": "https://github.com/alexh3o/simple_thermostat",
+  "documentation": "https://github.com/alexh3o/simple_thermostat_a",
   "dependencies": [
     "sensor",
     "switch"
@@ -10,6 +10,6 @@
     "@dadge"
   ],
   "version": "0.0.1",
-  "issue_tracker": "https://github.com/alexh3o/simple_thermostat/issues",
+  "issue_tracker": "https://github.com/alexh3o/simple_thermostat_a/issues",
   "iot_class": "local_polling"
 }
