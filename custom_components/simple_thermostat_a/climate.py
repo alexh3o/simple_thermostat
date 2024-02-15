@@ -1,6 +1,6 @@
 """Adds support for generic thermostat units.
 For more details about this platform, please refer to the documentation at
-https://github.com/alexh3o/simple_thermostat"""
+https://github.com/alexh3o/simple_thermostat_a"""
 import asyncio
 import logging
 import math
@@ -133,7 +133,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 
     async_add_entities(
         [
-            SimpleThermostat(
+            SimpleThermostatA(
                 name,
                 heater_entity_id,
                 sensor_entity_id,
@@ -154,7 +154,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     )
 
 
-class SimpleThermostat(ClimateEntity, RestoreEntity):
+class SimpleThermostatA(ClimateEntity, RestoreEntity):
     """Representation of a Generic Thermostat device."""
 
     def __init__(
