@@ -18,14 +18,6 @@ from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity, Cli
 # Replaced with following line
 from homeassistant.components.climate import (
     ATTR_PRESET_MODE,
-#    CURRENT_HVAC_COOL,
-#    CURRENT_HVAC_HEAT,
-#    CURRENT_HVAC_IDLE,
-#    CURRENT_HVAC_OFF,
-#    HVAC_MODE_COOL,
-#    HVAC_MODE_HEAT,
-#    HVACMode.OFF,
-# Added following line
     HVACMode,
     HVACAction,
     PRESET_AWAY,
@@ -36,8 +28,6 @@ from homeassistant.components.climate import (
     PRESET_HOME,
     PRESET_SLEEP,
     PRESET_ACTIVITY,
-#    SUPPORT_PRESET_MODE,
-#    SUPPORT_TARGET_TEMPERATURE,
 )
 from homeassistant.const import (
     ATTR_ENTITY_ID,
@@ -66,7 +56,6 @@ from homeassistant.helpers.reload import async_setup_reload_service
 from homeassistant.helpers.restore_state import RestoreEntity
 
 from . import DOMAIN, PLATFORMS
-# Added following line
 from . import const
 
 _LOGGER = logging.getLogger(__name__)
