@@ -80,7 +80,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(conf.CONF_PRECISION): vol.In(
             [PRECISION_TENTHS, PRECISION_HALVES, PRECISION_WHOLE]
         ),
-        vol.Optional(CONF_UNIQUE_ID): cv.string,
+        vol.Optional(CONF_UNIQUE_ID, default='none'): cv.string,
     }
 )
 
