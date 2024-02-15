@@ -92,21 +92,21 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     await async_setup_reload_service(hass, DOMAIN, PLATFORMS)
 
     parameters = {
-      name = config.get(CONF_NAME)
-      unique_id = config.get(CONF_UNIQUE_ID)
-      heater_entity_id = config.get(const.CONF_HEATER)
-      sensor_entity_id = config.get(const.CONF_SENSOR)
-      min_temp = config.get(const.CONF_MIN_TEMP)
-      max_temp = config.get(const.CONF_MAX_TEMP)
-      target_temp = config.get(const.CONF_TARGET_TEMP)
-      ac_mode = config.get(const.CONF_AC_MODE)
-      min_cycle_duration = config.get(const.CONF_MIN_DUR)
-      cold_tolerance = config.get(const.CONF_COLD_TOLERANCE)
-      hot_tolerance = config.get(const.CONF_HOT_TOLERANCE)
-      keep_alive = config.get(const.CONF_KEEP_ALIVE)
-      initial_hvac_mode = config.get(const.CONF_INITIAL_HVAC_MODE)
-      precision = config.get(const.CONF_PRECISION)
-      unit = hass.config.units.temperature_unit
+      'name' : config.get(CONF_NAME)
+      'unique_id' : config.get(CONF_UNIQUE_ID)
+      'heater_entity_id' : config.get(const.CONF_HEATER)
+      'sensor_entity_id' : config.get(const.CONF_SENSOR)
+      'min_temp' : config.get(const.CONF_MIN_TEMP)
+      'max_temp' : config.get(const.CONF_MAX_TEMP)
+      'target_temp' : config.get(const.CONF_TARGET_TEMP)
+      'ac_mode' : config.get(const.CONF_AC_MODE)
+      'min_cycle_duration' : config.get(const.CONF_MIN_DUR)
+      'cold_tolerance' : config.get(const.CONF_COLD_TOLERANCE)
+      'hot_tolerance' : config.get(const.CONF_HOT_TOLERANCE)
+      'keep_alive' : config.get(const.CONF_KEEP_ALIVE)
+      'initial_hvac_mode' : config.get(const.CONF_INITIAL_HVAC_MODE)
+      'precision' : config.get(const.CONF_PRECISION)
+      'unit' : hass.config.units.temperature_unit
     }
     async_add_entities([SimpleThermostatA(**parameters)])
 
