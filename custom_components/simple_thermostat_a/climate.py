@@ -15,7 +15,7 @@ from homeassistant.core import DOMAIN as HA_DOMAIN, CoreState, callback
 
 from homeassistant.exceptions import ConditionError
 
-from homeassistant.helpers.entity_platform import condition, entity_platform
+from homeassistant.helpers.entity_platform import entity_platform
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.helpers import condition
 import homeassistant.helpers.config_validation as cv
