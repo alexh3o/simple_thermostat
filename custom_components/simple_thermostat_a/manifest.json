@@ -1,0 +1,15 @@
+{
+  "domain": "simple_thermostat",
+  "name": "Simple Thermostat",
+  "documentation": "https://github.com/alexh3o/simple_thermostat",
+  "dependencies": [
+    "sensor",
+    "switch"
+  ],
+  "codeowners": [
+    "@dadge"
+  ],
+  "version": "0.0.1",
+  "issue_tracker": "https://github.com/alexh3o/simple_thermostat/issues",
+  "iot_class": "local_polling"
+}
