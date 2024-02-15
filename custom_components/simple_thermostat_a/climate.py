@@ -77,10 +77,10 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(const.CONF_INITIAL_HVAC_MODE): vol.In(
             [HVACMode.COOL, HVACMode.HEAT, HVACMode.OFF]
         ),
-        vol.Optional(conf.CONF_PRECISION): vol.In(
+        vol.Optional(const.CONF_PRECISION): vol.In(
             [PRECISION_TENTHS, PRECISION_HALVES, PRECISION_WHOLE]
         ),
-        vol.Optional(CONF_UNIQUE_ID, default='none'): cv.string,
+        vol.Optional(const.CONF_UNIQUE_ID, default='none'): cv.string,
     }
 )
 
