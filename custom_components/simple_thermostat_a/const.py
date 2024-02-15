@@ -1,5 +1,5 @@
-"""Constants for Smart Thermostat"""
-DOMAIN = "smart_thermostat"
+# Constants for Simple Thermostat A
+DOMAIN = "simple_thermostat_a"
 CONF_HEATER = "heater"
 CONF_NAME = "name"
 CONF_SENSOR = "target_sensor"
