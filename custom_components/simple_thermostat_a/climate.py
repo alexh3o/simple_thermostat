@@ -112,36 +112,19 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 class SimpleThermostatA(ClimateEntity, RestoreEntity):
     """Representation of a Generic Thermostat device."""
 
-    def __init__(
-        self,
-        name,
-        heater_entity_id,
-        sensor_entity_id,
-        min_temp,
-        max_temp,
-        target_temp,
-        ac_mode,
-        min_cycle_duration,
-        cold_tolerance,
-        hot_tolerance,
-        keep_alive,
-        initial_hvac_mode,
-        precision,
-        unit,
-        unique_id,
-    ):
+    def __init__(self, **kwargs):
         """Initialize the thermostat."""
-        self._name = name
-        self.heater_entity_id = heater_entity_id
-        self.sensor_entity_id = sensor_entity_id
-        self.ac_mode = ac_mode
-        self.min_cycle_duration = min_cycle_duration
-        self._cold_tolerance = cold_tolerance
-        self._hot_tolerance = hot_tolerance
-        self._keep_alive = keep_alive
-        self._hvac_mode = initial_hvac_mode
-        self._saved_target_temp = target_temp
-        self._temp_precision = precision
+        self._name = kwargs.get('name')
+        self.heater_entity_id = kwargs.get('heater_entity_id')
+        self.sensor_entity_id = kwargs.get('sensor_entity_id')
+        self.ac_mode = kwargs.get('ac_mode')
+        self.min_cycle_duration = kwargs.get('min_cycle_duration')
+        self._cold_tolerance = kwargs.get('cold_tolerance')
+        self._hot_tolerance = kwargs.get('hot_tolerance')
+        self._keep_alive = kwargs.get('keep_alive')
+        self._hvac_mode = kwargs.get('initial_hvac_mode')
+        self._saved_target_temp = kwargs.get('target_temp')
+        self._temp_precision = kwargs.get('precision')
         if self.ac_mode:
             self._attr_hvac_list = [HVACMode.COOL, HVACMode.OFF]
         else:
@@ -149,11 +132,11 @@ class SimpleThermostatA(ClimateEntity, RestoreEntity):
         self._active = False
         self._cur_temp = None
         self._temp_lock = asyncio.Lock()
-        self._min_temp = min_temp
-        self._max_temp = max_temp
-        self._target_temp = target_temp
-        self._unit = unit
-        self._unique_id = unique_id
+        self._min_temp = kwargs.get('min_temp')
+        self._max_temp = kwargs.get('max_temp')
+        self._target_temp = kwargs.get('target_temp')
+        self._unit = kwargs.get('unit')
+        self._unique_id = kwargs.get('unique_id')
         self._support_flags = ClimateEntityFeature.TARGET_TEMPERATURE
         self._support_flags |= ClimateEntityFeature.PRESET_MODE
         self._support_flags |= ClimateEntityFeature.TURN_ON
