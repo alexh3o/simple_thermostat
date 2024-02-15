@@ -7,7 +7,7 @@ import voluptuous as vol
 
 # Added 3 lines
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import condition, entity_platform
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 # Added ClimateEntityFeature 
@@ -108,13 +108,8 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
-async def async_setup_platform(
-    hass: HomeAssistant,
-    config: ConfigType,
-    add_entities: AddEntitiesCallback,
-    discovery_info: DiscoveryInfoType = None
-) -> None:
-    """Set up the thermostat platform."""
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+    """Set up the generic thermostat platform."""
     
     await async_setup_reload_service(hass, DOMAIN, PLATFORMS)
 
@@ -134,8 +129,7 @@ async def async_setup_platform(
     precision = config.get(const.CONF_PRECISION)
     unit = hass.config.units.temperature_unit
 
-    # async_add_entities(
-    add_entities(
+    async_add_entities(
         [
             SimpleThermostat(
                 name,
