@@ -67,7 +67,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Required(const.CONF_SENSOR): cv.entity_id,
         vol.Optional(const.CONF_AC_MODE): cv.boolean,
         vol.Optional(const.CONF_MAX_TEMP): vol.Coerce(float),
-        vol.Optional(const.CONF_MIN_DUR): cv.positive_time_period,
+        vol.Optional(const.CONF_MIN_DUR, default=const.DEFAULT_MIN_DUR): cv.positive_time_period,
         vol.Optional(const.CONF_MIN_TEMP): vol.Coerce(float),
         vol.Optional(const.CONF_NAME, default=const.DEFAULT_NAME): cv.string,
         vol.Optional(const.CONF_COLD_TOLERANCE, default=const.DEFAULT_TOLERANCE): vol.Coerce(float),
