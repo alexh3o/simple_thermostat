@@ -126,6 +126,7 @@ async def async_setup_platform(
             vol.Optional("sleep_temp"): vol.Coerce(float),
             vol.Optional("activity_temp"): vol.Coerce(float),
         },
+    )
 
 class SimpleThermostatA(ClimateEntity, RestoreEntity):
     # Representation of a Generic Thermostat device
