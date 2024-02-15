@@ -1,8 +1,4 @@
-[![GitHub Release][releases-shield]][releases]
-[![GitHub Activity][commits-shield]][commits]
-[![License][license-shield]](LICENSE)
-[![hacs][hacsbadge]][hacs]
-[![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
+
 
 
 Forked from https://github.com/dadge/simple_thermostat/ because it is not maintained anymore
