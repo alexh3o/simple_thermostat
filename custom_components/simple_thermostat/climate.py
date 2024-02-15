@@ -27,6 +27,7 @@ from homeassistant.components.climate import (
 #    HVACMode.OFF,
 # Added following line
     HVACMode,
+    HVACAction,
     PRESET_AWAY,
     PRESET_NONE,
     PRESET_ECO,
@@ -346,12 +347,12 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
         Need to be one of CURRENT_HVAC_*.
         """
         if self._attr_hvac_mode == HVACMode.OFF:
-            return CURRENT_HVAC_OFF
+            return HVACAction.OFF
         if not self._is_device_active:
-            return CURRENT_HVAC_IDLE
+            return HVACAction.IDLE
         if self.ac_mode:
-            return CURRENT_HVAC_COOL
-        return CURRENT_HVAC_HEAT
+            return HVACAction.COOLING
+        return HVACAction.HEATING
 
     @property
     def target_temperature(self):
