@@ -1,4 +1,6 @@
-"""Adds support for generic thermostat units."""
+"""Adds support for generic thermostat units.
+For more details about this platform, please refer to the documentation at
+https://github.com/alexh3o/simple_thermostat"""
 import asyncio
 import logging
 import math
