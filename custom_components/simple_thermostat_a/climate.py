@@ -95,8 +95,8 @@ async def async_setup_platform(
     await async_setup_reload_service(hass, DOMAIN, PLATFORMS)
 
     parameters = {
-      'name' : config.get(CONF_NAME),
-      'unique_id' : config.get(CONF_UNIQUE_ID),
+      'name' : config.get(const.CONF_NAME),
+      'unique_id' : config.get(const.CONF_UNIQUE_ID),
       'heater_entity_id' : config.get(const.CONF_HEATER),
       'sensor_entity_id' : config.get(const.CONF_SENSOR),
       'min_temp' : config.get(const.CONF_MIN_TEMP),
