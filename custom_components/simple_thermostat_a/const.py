@@ -1,6 +1,7 @@
 """Constants for Smart Thermostat"""
 DOMAIN = "smart_thermostat"
 CONF_HEATER = "heater"
+CONF_NAME = "conf_name"
 CONF_SENSOR = "target_sensor"
 CONF_AC_MODE = "ac_mode"
 CONF_MAX_TEMP = "max_temp"
