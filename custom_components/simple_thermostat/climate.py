@@ -185,7 +185,7 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
         self._cold_tolerance = cold_tolerance
         self._hot_tolerance = hot_tolerance
         self._keep_alive = keep_alive
-        self._attr_hvac_mode = initial_hvac_mode
+        self._hvac_mode = initial_hvac_mode
         self._saved_target_temp = target_temp
         self._temp_precision = precision
         if self.ac_mode:
@@ -262,8 +262,8 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
                     self._target_temp = float(old_state.attributes[ATTR_TEMPERATURE])
             if old_state.attributes.get(ATTR_PRESET_MODE) is not None:
                 self._preset_mode = old_state.attributes.get(ATTR_PRESET_MODE)
-            if not self._attr_hvac_mode and old_state.state:
-                self._attr_hvac_mode = old_state.state
+            if not self._hvac_mode and old_state.state:
+                self._hvac_mode = old_state.state
             for x in self.preset_modes:
                 if old_state.attributes.get(x + "_temp") is not None:
                      self._attributes[x + "_temp"] = old_state.attributes.get(x + "_temp")
@@ -280,11 +280,11 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
 
 
         # Set default state to off
-        if not self._attr_hvac_mode:
-            self._attr_hvac_mode = HVACMode.OFF
+        if not self._hvac_mode:
+            self._hvac_mode = HVACMode.OFF
 
         # Prevent the device from keep running if HVACMode.OFF
-        if self._attr_hvac_mode == HVACMode.OFF and self._is_device_active:
+        if self._hvac_mode == HVACMode.OFF and self._is_device_active:
             await self._async_heater_turn_off()
             _LOGGER.warning(
                 "The climate mode is OFF, but the switch device is ON. Turning off device %s",
@@ -338,7 +338,7 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
     @property
     def hvac_mode(self):
         """Return current operation."""
-        return self._attr_hvac_mode
+        return self._hvac_mode
 
     @property
     def hvac_action(self):
@@ -346,7 +346,7 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
 
         Need to be one of CURRENT_HVAC_*.
         """
-        if self._attr_hvac_mode == HVACMode.OFF:
+        if self._hvac_mode == HVACMode.OFF:
             return HVACAction.OFF
         if not self._is_device_active:
             return HVACAction.IDLE
@@ -384,13 +384,13 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
     async def async_set_hvac_mode(self, hvac_mode):
         """Set hvac mode."""
         if hvac_mode == HVACMode.HEAT:
-            self._attr_hvac_mode = HVACMode.HEAT
+            self._hvac_mode = HVACMode.HEAT
             await self._async_control_heating(force=True)
         elif hvac_mode == HVACMode.COOL:
-            self._attr_hvac_mode = HVACMode.COOL
+            self._hvac_mode = HVACMode.COOL
             await self._async_control_heating(force=True)
         elif hvac_mode == HVACMode.OFF:
-            self._attr_hvac_mode = HVACMode.OFF
+            self._hvac_mode = HVACMode.OFF
             if self._is_device_active:
                 await self._async_heater_turn_off()
         else:
@@ -473,7 +473,7 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
                     self._target_temp,
                 )
 
-            if not self._active or self._attr_hvac_mode == HVACMode.OFF:
+            if not self._active or self._hvac_mode == HVACMode.OFF:
                 return
 
             # If the `force` argument is True, we
