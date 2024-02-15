@@ -86,7 +86,6 @@ CONF_HOT_TOLERANCE = "hot_tolerance"
 CONF_KEEP_ALIVE = "keep_alive"
 CONF_INITIAL_HVAC_MODE = "initial_hvac_mode"
 CONF_PRECISION = "precision"
-SUPPORT_FLAGS = SUPPORT_TARGET_TEMPERATURE
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -200,7 +199,11 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
         self._target_temp = target_temp
         self._unit = unit
         self._unique_id = unique_id
-        self._support_flags = ClimateEntityFeature.TARGET_TEMPERATURE | ClimateEntityFeature.PRESET_MODE
+        self._support_flags = ClimateEntityFeature.TARGET_TEMPERATURE
+        self._support_flags |= ClimateEntityFeature.PRESET_MODE
+        self._support_flags |= ClimateEntityFeature.TURN_ON
+        self._support_flags |= ClimateEntityFeature.TURN_OFF
+        self._enable_turn_on_off_backwards_compatibility = False  # To be removed after deprecation period
         self._preset_mode = PRESET_NONE
         self._attributes = {}
 
