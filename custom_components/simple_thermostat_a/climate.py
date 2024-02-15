@@ -1,18 +1,31 @@
-"""Adds support for generic thermostat units.
-For more details about this platform, please refer to the documentation at
-https://github.com/alexh3o/simple_thermostat_a"""
+# Adds support for generic thermostat units.
+# For more details about this platform, please refer to the documentation at
+# https://github.com/alexh3o/simple_thermostat_a
+
+## IMPORTS
+## -------
+
 import asyncio
 import logging
 import math
-
 import voluptuous as vol
 
-# Added 3 lines
 from homeassistant.core import HomeAssistant
+from homeassistant.core import DOMAIN as HA_DOMAIN, CoreState, callback
+
+from homeassistant.exceptions import ConditionError
+
 from homeassistant.helpers.entity_platform import condition, entity_platform
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+from homeassistant.helpers import condition
+import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.event import (
+    async_track_state_change_event,
+    async_track_time_interval,
+)
+from homeassistant.helpers.reload import async_setup_reload_service
+from homeassistant.helpers.restore_state import RestoreEntity
 
-# Added ClimateEntityFeature 
 from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity, ClimateEntityFeature
 from homeassistant.components.climate import (
     ATTR_PRESET_MODE,
@@ -42,24 +55,11 @@ from homeassistant.const import (
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
 )
-from homeassistant.core import DOMAIN as HA_DOMAIN, CoreState, callback
-from homeassistant.exceptions import ConditionError
-from homeassistant.helpers import condition
-import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.event import (
-    async_track_state_change_event,
-    async_track_time_interval,
-)
-from homeassistant.helpers.reload import async_setup_reload_service
-from homeassistant.helpers.restore_state import RestoreEntity
 
 from . import DOMAIN, PLATFORMS
 from . import const
 
 _LOGGER = logging.getLogger(__name__)
-
-DEFAULT_TOLERANCE = 0.3
-DEFAULT_NAME = "Generic Thermostat"
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -84,8 +84,13 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    """Set up the generic thermostat platform."""
+async def async_setup_platform(
+    hass: HomeAssistant,
+    config: ConfigType,
+    add_entities: AddEntitiesCallback,
+    discovery_info: DiscoveryInfoType = None
+) -> None:
+    # Set up the simple thermostat thermostat platform.
     
     await async_setup_reload_service(hass, DOMAIN, PLATFORMS)
 
@@ -106,14 +111,27 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
       'precision' : config.get(const.CONF_PRECISION),
       'unit' : hass.config.units.temperature_unit,
     }
-    async_add_entities([SimpleThermostatA(**parameters)])
+    add_entities([SimpleThermostatA(**parameters)])
 
+    hass.services.async_register(  # type: ignore
+        DOMAIN,
+        "set_preset_temp",
+        "async_set_preset_temp",
+        {
+            vol.Optional("away_temp"): vol.Coerce(float),
+            vol.Optional("eco_temp"): vol.Coerce(float),
+            vol.Optional("boost_temp"): vol.Coerce(float),
+            vol.Optional("comfort_temp"): vol.Coerce(float),
+            vol.Optional("home_temp"): vol.Coerce(float),
+            vol.Optional("sleep_temp"): vol.Coerce(float),
+            vol.Optional("activity_temp"): vol.Coerce(float),
+        },
 
 class SimpleThermostatA(ClimateEntity, RestoreEntity):
-    """Representation of a Generic Thermostat device."""
+    # Representation of a Generic Thermostat device
 
     def __init__(self, **kwargs):
-        """Initialize the thermostat."""
+        # Initialize the thermostat
         self._name = kwargs.get('name')
         self.heater_entity_id = kwargs.get('heater_entity_id')
         self.sensor_entity_id = kwargs.get('sensor_entity_id')
