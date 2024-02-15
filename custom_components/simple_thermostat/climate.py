@@ -5,16 +5,26 @@ import math
 
 import voluptuous as vol
 
-from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity
-from homeassistant.components.climate.const import (
+# Added 3 lines
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+
+# Added ClimateEntityFeature 
+from homeassistant.components.climate import PLATFORM_SCHEMA, ClimateEntity, ClimateEntityFeature
+# Removed: from homeassistant.components.climate.const import (
+# Replaced with following line
+from homeassistant.components.climate import (
     ATTR_PRESET_MODE,
-    CURRENT_HVAC_COOL,
-    CURRENT_HVAC_HEAT,
-    CURRENT_HVAC_IDLE,
-    CURRENT_HVAC_OFF,
-    HVAC_MODE_COOL,
-    HVAC_MODE_HEAT,
-    HVAC_MODE_OFF,
+#    CURRENT_HVAC_COOL,
+#    CURRENT_HVAC_HEAT,
+#    CURRENT_HVAC_IDLE,
+#    CURRENT_HVAC_OFF,
+#    HVAC_MODE_COOL,
+#    HVAC_MODE_HEAT,
+#    HVACMode.OFF,
+# Added following line
+    HVACMode,
     PRESET_AWAY,
     PRESET_NONE,
     PRESET_ECO,
@@ -23,8 +33,8 @@ from homeassistant.components.climate.const import (
     PRESET_HOME,
     PRESET_SLEEP,
     PRESET_ACTIVITY,
-    SUPPORT_PRESET_MODE,
-    SUPPORT_TARGET_TEMPERATURE,
+#    SUPPORT_PRESET_MODE,
+#    SUPPORT_TARGET_TEMPERATURE,
 )
 from homeassistant.const import (
     ATTR_ENTITY_ID,
@@ -53,6 +63,8 @@ from homeassistant.helpers.reload import async_setup_reload_service
 from homeassistant.helpers.restore_state import RestoreEntity
 
 from . import DOMAIN, PLATFORMS
+# Added following line
+from . import const
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -75,50 +87,55 @@ SUPPORT_FLAGS = SUPPORT_TARGET_TEMPERATURE
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
-        vol.Required(CONF_HEATER): cv.entity_id,
-        vol.Required(CONF_SENSOR): cv.entity_id,
-        vol.Optional(CONF_AC_MODE): cv.boolean,
-        vol.Optional(CONF_MAX_TEMP): vol.Coerce(float),
-        vol.Optional(CONF_MIN_DUR): cv.positive_time_period,
-        vol.Optional(CONF_MIN_TEMP): vol.Coerce(float),
-        vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional(CONF_COLD_TOLERANCE, default=DEFAULT_TOLERANCE): vol.Coerce(float),
-        vol.Optional(CONF_HOT_TOLERANCE, default=DEFAULT_TOLERANCE): vol.Coerce(float),
-        vol.Optional(CONF_TARGET_TEMP): vol.Coerce(float),
-        vol.Optional(CONF_KEEP_ALIVE): cv.positive_time_period,
-        vol.Optional(CONF_INITIAL_HVAC_MODE): vol.In(
-            [HVAC_MODE_COOL, HVAC_MODE_HEAT, HVAC_MODE_OFF]
+        vol.Required(const.CONF_HEATER): cv.entity_id,
+        vol.Required(const.CONF_SENSOR): cv.entity_id,
+        vol.Optional(const.CONF_AC_MODE): cv.boolean,
+        vol.Optional(const.CONF_MAX_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_MIN_DUR): cv.positive_time_period,
+        vol.Optional(const.CONF_MIN_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_NAME, default=const.DEFAULT_NAME): cv.string,
+        vol.Optional(const.CONF_COLD_TOLERANCE, default=const.DEFAULT_TOLERANCE): vol.Coerce(float),
+        vol.Optional(const.CONF_HOT_TOLERANCE, default=const.DEFAULT_TOLERANCE): vol.Coerce(float),
+        vol.Optional(const.CONF_TARGET_TEMP): vol.Coerce(float),
+        vol.Optional(const.CONF_KEEP_ALIVE): cv.positive_time_period,
+        vol.Optional(const.CONF_INITIAL_HVAC_MODE): vol.In(
+            [HVACMode.COOL, HVACMode.HEAT, HVACMode.OFF]
         ),
-        vol.Optional(CONF_PRECISION): vol.In(
+        vol.Optional(conf.CONF_PRECISION): vol.In(
             [PRECISION_TENTHS, PRECISION_HALVES, PRECISION_WHOLE]
         ),
         vol.Optional(CONF_UNIQUE_ID): cv.string,
     }
 )
 
-
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    """Set up the generic thermostat platform."""
-
+async def async_setup_platform(
+    hass: HomeAssistant,
+    config: ConfigType,
+    add_entities: AddEntitiesCallback,
+    discovery_info: DiscoveryInfoType = None
+) -> None:
+    """Set up the thermostat platform."""
+    
     await async_setup_reload_service(hass, DOMAIN, PLATFORMS)
 
     name = config.get(CONF_NAME)
-    heater_entity_id = config.get(CONF_HEATER)
-    sensor_entity_id = config.get(CONF_SENSOR)
-    min_temp = config.get(CONF_MIN_TEMP)
-    max_temp = config.get(CONF_MAX_TEMP)
-    target_temp = config.get(CONF_TARGET_TEMP)
-    ac_mode = config.get(CONF_AC_MODE)
-    min_cycle_duration = config.get(CONF_MIN_DUR)
-    cold_tolerance = config.get(CONF_COLD_TOLERANCE)
-    hot_tolerance = config.get(CONF_HOT_TOLERANCE)
-    keep_alive = config.get(CONF_KEEP_ALIVE)
-    initial_hvac_mode = config.get(CONF_INITIAL_HVAC_MODE)
-    precision = config.get(CONF_PRECISION)
-    unit = hass.config.units.temperature_unit
     unique_id = config.get(CONF_UNIQUE_ID)
+    heater_entity_id = config.get(const.CONF_HEATER)
+    sensor_entity_id = config.get(const.CONF_SENSOR)
+    min_temp = config.get(const.CONF_MIN_TEMP)
+    max_temp = config.get(const.CONF_MAX_TEMP)
+    target_temp = config.get(const.CONF_TARGET_TEMP)
+    ac_mode = config.get(const.CONF_AC_MODE)
+    min_cycle_duration = config.get(const.CONF_MIN_DUR)
+    cold_tolerance = config.get(const.CONF_COLD_TOLERANCE)
+    hot_tolerance = config.get(const.CONF_HOT_TOLERANCE)
+    keep_alive = config.get(const.CONF_KEEP_ALIVE)
+    initial_hvac_mode = config.get(const.CONF_INITIAL_HVAC_MODE)
+    precision = config.get(const.CONF_PRECISION)
+    unit = hass.config.units.temperature_unit
 
-    async_add_entities(
+    # async_add_entities(
+    add_entities(
         [
             SimpleThermostat(
                 name,
@@ -171,13 +188,13 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
         self._cold_tolerance = cold_tolerance
         self._hot_tolerance = hot_tolerance
         self._keep_alive = keep_alive
-        self._hvac_mode = initial_hvac_mode
+        self._attr_hvac_mode = initial_hvac_mode
         self._saved_target_temp = target_temp
         self._temp_precision = precision
         if self.ac_mode:
-            self._hvac_list = [HVAC_MODE_COOL, HVAC_MODE_OFF]
+            self._attr_hvac_list = [HVACMode.COOL, HVACMode.OFF]
         else:
-            self._hvac_list = [HVAC_MODE_HEAT, HVAC_MODE_OFF]
+            self._attr_hvac_list = [HVACMode.HEAT, HVACMode.OFF]
         self._active = False
         self._cur_temp = None
         self._temp_lock = asyncio.Lock()
@@ -186,7 +203,7 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
         self._target_temp = target_temp
         self._unit = unit
         self._unique_id = unique_id
-        self._support_flags = SUPPORT_FLAGS | SUPPORT_PRESET_MODE
+        self._support_flags = ClimateEntityFeature.TARGET_TEMPERATURE | ClimateEntityFeature.PRESET_MODE
         self._preset_mode = PRESET_NONE
         self._attributes = {}
 
@@ -248,8 +265,8 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
                     self._target_temp = float(old_state.attributes[ATTR_TEMPERATURE])
             if old_state.attributes.get(ATTR_PRESET_MODE) is not None:
                 self._preset_mode = old_state.attributes.get(ATTR_PRESET_MODE)
-            if not self._hvac_mode and old_state.state:
-                self._hvac_mode = old_state.state
+            if not self._attr_hvac_mode and old_state.state:
+                self._attr_hvac_mode = old_state.state
             for x in self.preset_modes:
                 if old_state.attributes.get(x + "_temp") is not None:
                      self._attributes[x + "_temp"] = old_state.attributes.get(x + "_temp")
@@ -266,11 +283,11 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
 
 
         # Set default state to off
-        if not self._hvac_mode:
-            self._hvac_mode = HVAC_MODE_OFF
+        if not self._attr_hvac_mode:
+            self._attr_hvac_mode = HVACMode.OFF
 
-        # Prevent the device from keep running if HVAC_MODE_OFF
-        if self._hvac_mode == HVAC_MODE_OFF and self._is_device_active:
+        # Prevent the device from keep running if HVACMode.OFF
+        if self._attr_hvac_mode == HVACMode.OFF and self._is_device_active:
             await self._async_heater_turn_off()
             _LOGGER.warning(
                 "The climate mode is OFF, but the switch device is ON. Turning off device %s",
@@ -324,7 +341,7 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
     @property
     def hvac_mode(self):
         """Return current operation."""
-        return self._hvac_mode
+        return self._attr_hvac_mode
 
     @property
     def hvac_action(self):
@@ -332,7 +349,7 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
 
         Need to be one of CURRENT_HVAC_*.
         """
-        if self._hvac_mode == HVAC_MODE_OFF:
+        if self._attr_hvac_mode == HVACMode.OFF:
             return CURRENT_HVAC_OFF
         if not self._is_device_active:
             return CURRENT_HVAC_IDLE
@@ -346,7 +363,7 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
         return self._target_temp
 
     @property
-    def hvac_modes(self):
+    def hvac_list(self):
         """List of available operation modes."""
         return self._hvac_list
 
@@ -369,14 +386,14 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
 
     async def async_set_hvac_mode(self, hvac_mode):
         """Set hvac mode."""
-        if hvac_mode == HVAC_MODE_HEAT:
-            self._hvac_mode = HVAC_MODE_HEAT
+        if hvac_mode == HVACMode.HEAT:
+            self._attr_hvac_mode = HVACMode.HEAT
             await self._async_control_heating(force=True)
-        elif hvac_mode == HVAC_MODE_COOL:
-            self._hvac_mode = HVAC_MODE_COOL
+        elif hvac_mode == HVACMode.COOL:
+            self._attr_hvac_mode = HVACMode.COOL
             await self._async_control_heating(force=True)
-        elif hvac_mode == HVAC_MODE_OFF:
-            self._hvac_mode = HVAC_MODE_OFF
+        elif hvac_mode == HVACMode.OFF:
+            self._attr_hvac_mode = HVACMode.OFF
             if self._is_device_active:
                 await self._async_heater_turn_off()
         else:
@@ -459,7 +476,7 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
                     self._target_temp,
                 )
 
-            if not self._active or self._hvac_mode == HVAC_MODE_OFF:
+            if not self._active or self._attr_hvac_mode == HVACMode.OFF:
                 return
 
             # If the `force` argument is True, we
@@ -470,7 +487,7 @@ class SimpleThermostat(ClimateEntity, RestoreEntity):
                 if self._is_device_active:
                     current_state = STATE_ON
                 else:
-                    current_state = HVAC_MODE_OFF
+                    current_state = HVACMode.OFF
                 try:
                     long_enough = condition.state(
                         self.hass,
