@@ -7,7 +7,7 @@
 
 Forked from https://github.com/dadge/simple_thermostat/ because it is not maintained anymore
 
-### Warning ! in development
+### Warning ! in development, not available in HACS
 
 This custom component for Home Assistant is an upgrade of the generic thermostat which handles presets mode in a very simple way.
 
