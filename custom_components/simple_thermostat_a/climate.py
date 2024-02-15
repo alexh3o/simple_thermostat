@@ -133,7 +133,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     }
     async_add_entities([SimpleThermostatA(**parameters)])
 
-    hass.services.async_register(  # type: ignore
+    platform.async_register_entity_service(  # type: ignore
         "set_preset_temp",
         {
             vol.Optional("away_temp"): vol.Coerce(float),
@@ -558,22 +558,22 @@ class SimpleThermostatA(ClimateEntity, RestoreEntity):
         )
 
     async def _async_heater_turn_off(self):
-        """Turn heater toggleable device off."""
+        # Turn heater toggleable device off
         data = {ATTR_ENTITY_ID: self.heater_entity_id}
         await self.hass.services.async_call(
             HA_DOMAIN, SERVICE_TURN_OFF, data, context=self._context
         )
 
     async def async_set_preset_mode(self, preset_mode: str):
-        """Set new preset mode."""
-        """Test if Preset mode is valid"""
+        # Set new preset mode.
+        # Test if Preset mode is valid
         if not preset_mode in self.preset_modes:
             return
-        """if old value is preset_none we store the temp"""
+        # if old value is preset_none we store the temp
         if self._preset_mode == PRESET_NONE:
             self._saved_target_temp = self._target_temp
         self._preset_mode = preset_mode
-        """let's deal with the new value"""
+        # let's deal with the new value
         if self._preset_mode == PRESET_NONE:
             self._target_temp = self._saved_target_temp
         else:
